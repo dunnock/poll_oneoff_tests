@@ -1,8 +1,19 @@
 use ::wasi::wasi_unstable as wasi;
 
 fn main() {
-    try_fd_read_poll_oneoff();
-    //std::thread::sleep(std::time::Duration::new(0,5));
+    let args: Vec<String> = std::env::args().collect();
+
+    let options = ["thread_sleep", "poll_clock", "poll_fd_read"];
+
+    match args.get(1).map(|s| s.as_str()) {
+        Some("thread_sleep") => std::thread::sleep(std::time::Duration::new(0,5)),
+        Some("poll_clock") => debug_std_thread_sleep(),
+        Some("poll_fd_read") => try_fd_read_poll_oneoff(),
+        _ => {
+            println!("WASI test for poll_oneoff function\n");
+            println!("Usage: poll_oneoff_tests.wasm <test>; where test is one of: {:?}", options)
+        }
+    }
 }
 
 fn debug_std_thread_sleep() {
